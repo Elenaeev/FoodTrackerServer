@@ -74,7 +74,7 @@ Every ingredient used MUST include its Id
     try
     {
         var response = await client.Models.GenerateContentAsync(
-            model: "gemini-2.5-flash",
+            model: "gemini-3.1-flash-lite-preview",
             contents: prompt,
             config: config
         );
@@ -91,6 +91,7 @@ Every ingredient used MUST include its Id
     }
     catch (Exception ex)
     {
+        Console.WriteLine($"Error calling API: {ex.Message}");
         return Results.Problem($"Error calling API: {ex.Message}");
     }
 
