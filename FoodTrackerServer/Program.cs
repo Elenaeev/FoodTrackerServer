@@ -5,15 +5,30 @@ using System.Text.Json;
 using Type = Google.GenAI.Types.Type;
 
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
 
-app.Urls.Add("http://0.0.0.0:5246");
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+var app = builder.Build();
+app.UseCors();
+
+var port = System.Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.MapGet("/", () => "Hello World!");
 
 app.MapPost("/generate-recipe", async (GenerateRecipeRequest request) =>
 {
-    var apiKey = builder.Configuration["GEMINI_API_KEY"];
+    //var apiKey = builder.Configuration["GEMINI_API_KEY"];
+    var apiKey = System.Environment.GetEnvironmentVariable("GEMINI_API_KEY");
     if (string.IsNullOrEmpty(apiKey))
         return Results.Problem("Gemini API key error");
 
